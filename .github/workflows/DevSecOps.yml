@@ -72,6 +72,7 @@ jobs:
         run: docker build -t frontend:latest .
         working-directory: frontend
 
+
   gitleaks:
     name: Gitleaks Scan
     runs-on: ubuntu-latest
@@ -85,7 +86,29 @@ jobs:
         uses: gitleaks/gitleaks-action@v3
         env: 
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  
+  
+  trivy-sca:
+    name: Trivy SCA Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v7
+
+      - name: Run Trivy dependency Scan
+        uses: aquasecurity/trivy-action@0.36.0
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          severity: 'CRITICAL,HIGH'
+          exit-code: '1'
+          ignore-unfixed: true
+          format: 'table'
+      
+
+
          
 
 
       
+
