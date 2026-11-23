@@ -72,4 +72,20 @@ jobs:
         run: docker build -t frontend:latest .
         working-directory: frontend
 
+  gitleaks:
+    name: Gitleaks Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Run Gitleaks
+        uses: gitleaks/gitleaks-action@v3
+        env: 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+         
+
+
       
