@@ -99,9 +99,9 @@ jobs:
         uses: aquasecurity/trivy-action@v0.36.0
         with:
           scan-type: "fs"
-          output: trivy-report.html
-          format: template
-          template: '@contrib/html.tpl'
+          output: trivy-report.txt
+          format: table
+          template: txt
           scan-ref: .
           exit-code: 0
 
@@ -109,7 +109,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: trivy-report
-          path: trivy-report.html
+          path: trivy-report.txt
           retention-days: 30
           exit-code: 0
 
