@@ -72,6 +72,7 @@ jobs:
         run: docker build -t frontend:latest .
         working-directory: frontend
 
+
   gitleaks:
     name: Gitleaks Scan
     runs-on: ubuntu-latest
@@ -85,7 +86,49 @@ jobs:
         uses: gitleaks/gitleaks-action@v3
         env: 
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  
+
+  trivy-sca:
+    name: Trivy SCA Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v7
+
+      - name: Generate Trivy Vulnerability Report
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          scan-type: "fs"
+          output: trivy-report.txt
+          format: table
+          template: txt
+          scan-ref: .
+          exit-code: 0
+
+      - name: Upload Vulnerability Scan Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-report
+          path: trivy-report.txt
+          retention-days: 30
+          exit-code: 0
+
+      - name: Fail build on High/Criticial Vulnerabilities
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          scan-type: "fs"
+          format: table
+          scan-ref: .
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: 1
+          # On a subsequent call to the action we know trivy is already installed so can skip this
+          skip-setup-trivy: true
+      
+
+
          
 
 
       
+
