@@ -125,6 +125,7 @@ jobs:
           # On a subsequent call to the action we know trivy is already installed so can skip this
           skip-setup-trivy: true
       
+      
   SAST-semgrep: 
     name: Semgrep scan
     runs-on: ubuntu-latest

@@ -16,7 +16,7 @@ app.get('/api/tasks', async (req, res) => {
   const search = req.query.search || '';
   try {
     const result = await db.query(
-      'SELECT * FROM users WHERE title ILIKE $1 ORDER BY id DESC',
+      'SELECT * FROM tasks WHERE title ILIKE $1 ORDER BY id DESC',
       [`%${search}%`]
     );
     res.json(result.rows);

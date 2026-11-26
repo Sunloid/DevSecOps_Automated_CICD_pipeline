@@ -5,5 +5,5 @@ COPY package*.json ./
 RUN npm install
 COPY . .
 EXPOSE 3000
-USER non-root
+USER node
 CMD ["node", "src/index.js"]
