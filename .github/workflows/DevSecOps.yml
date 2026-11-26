@@ -133,7 +133,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7
 
       - name: Run Semgrep
-        uses: semgrep scan --config p/default --config p/nodejs --config p/expressjs --config p/react --config p/sql-injection --config p/xss --config p/dockerfile --config p/docker-compose --config p/nginx --config p/github-actions --error
+        run: semgrep scan --config p/default --config p/nodejs --config p/expressjs --config p/react --config p/sql-injection --config p/xss --config p/dockerfile --config p/docker-compose --config p/nginx --config p/github-actions --error
 
 
       
