@@ -2,6 +2,8 @@ const express = require('express');
 const _ = require('lodash');
 const db = require('./db');
 
+// Justification: no authentication or cookies in this app, so CSRF has no session to hijack. Revisit if login is added.
+// nosemgrep: javascript.express.security.audit.express-check-csurf-middleware-usage.express-check-csurf-middleware-usage
 const app = express();
 app.use(express.json());
 
@@ -12,15 +14,15 @@ app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
 // List tasks, optional ?search=
 app.get('/api/tasks', async (req, res) => {
   const search = req.query.search || '';
-  // INTENTIONAL WEAKNESS #1: SQL built from raw user input (SQL injection)
-  const sql =
-    "SELECT * FROM tasks WHERE title ILIKE '%" + search + "%' ORDER BY id DESC";
   try {
-    const result = await db.query(sql);
+    const result = await db.query(
+      'SELECT * FROM users WHERE title ILIKE $1 ORDER BY id DESC',
+      [`%${search}%`]
+    );
     res.json(result.rows);
   } catch (err) {
-    // INTENTIONAL WEAKNESS #2: leaks internal error details
-    res.status(500).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ error: 'Could not load tasks'});
   }
 });
 

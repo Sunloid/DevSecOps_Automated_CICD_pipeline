@@ -15,10 +15,10 @@ jobs:
     runs-on: ubuntu-latest
     steps: 
       - name: Check out code
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7
       
       - name: Set up Node
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1  # v7
         with: 
           node-version: '22'
           cache: 'npm'
@@ -38,10 +38,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7
 
       - name: Set up Node
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1  # v7
         with:
           node-version: '22'
           cache: 'npm'
@@ -62,7 +62,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7
 
       - name: Build backend image
         run: docker build -t backend:latest .
@@ -78,12 +78,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7
         with:
           fetch-depth: 0
 
       - name: Run Gitleaks
-        uses: gitleaks/gitleaks-action@v3
+        uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e  # v3
         env: 
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   
@@ -93,10 +93,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7
 
       - name: Generate Trivy Vulnerability Report
-        uses: aquasecurity/trivy-action@v0.36.0
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25  # v0.36.0
         with:
           scan-type: "fs"
           output: trivy-report.txt
@@ -106,7 +106,7 @@ jobs:
           exit-code: 0
 
       - name: Upload Vulnerability Scan Results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4
         with:
           name: trivy-report
           path: trivy-report.txt
@@ -114,7 +114,7 @@ jobs:
           exit-code: 0
 
       - name: Fail build on High/Criticial Vulnerabilities
-        uses: aquasecurity/trivy-action@v0.36.0
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25  # v0.36.0
         with:
           scan-type: "fs"
           format: table
@@ -125,10 +125,14 @@ jobs:
           # On a subsequent call to the action we know trivy is already installed so can skip this
           skip-setup-trivy: true
       
+  SAST-semgrep: 
+    name: Semgrep scan
+    runs-on: ubuntu-latest
+    container:
+      image: semgrep/semgrep:latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7
 
-
-         
-
-
-      
-
+      - name: Run Semgrep
+        run: semgrep scan --config p/default --config p/nodejs --config p/expressjs --config p/react --config p/sql-injection --config p/xss --config p/dockerfile --config p/docker-compose --config p/nginx --config p/github-actions --error
