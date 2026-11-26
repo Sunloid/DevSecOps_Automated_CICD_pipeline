@@ -8,6 +8,8 @@ const pool = new Pool({
   port: 5432,
 });
 
+// Justification: helper only forwards SQL and params; every caller uses parameterized queries.
+// nosemgrep: javascript.lang.security.audit.sqli.node-postgres-sqli.node-postgres-sqli
 const query = (text, params) => pool.query(text, params);
 
 async function init() {

@@ -2,9 +2,8 @@ const express = require('express');
 const _ = require('lodash');
 const db = require('./db');
 
+// Justification: no authentication or cookies in this app, so CSRF has no session to hijack. Revisit if login is added.
 // nosemgrep: javascript.express.security.audit.express-check-csurf-middleware-usage.express-check-csurf-middleware-usage
-// Justification: no authentication or cookies in this app, so CSRF has no session to hijack.
-// Revisit if cookie-based login is ever added.
 const app = express();
 app.use(express.json());
 
