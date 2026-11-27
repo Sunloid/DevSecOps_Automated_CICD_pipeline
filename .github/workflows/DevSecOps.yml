@@ -65,12 +65,47 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7
 
       - name: Build backend image
-        run: docker build -t backend:latest .
+        run: docker build -t vaultboard-backend:latest .
         working-directory: backend
 
       - name: Build frontend image
-        run: docker build -t frontend:latest .
+        run: docker build -t vaultboard-frontend:latest .
         working-directory: frontend
+
+      - name: Scan backend image with Trivy
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25  # v0.36.0
+        with:
+          scan-type: image
+          image-ref: vaultboard-backend:latest
+          severity: HIGH,CRITICAL
+          exit-code: 1
+          # Dont report vulnerabilities that have no fix yet
+          ignore-unfixed: true
+          format: table
+
+      - name: Scan frontend image with Trivy
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25  # v0.36.0
+        with:
+          scan-type: image
+          image-ref: vaultboard-frontend:latest
+          severity: HIGH,CRITICAL
+          exit-code: 1
+          # Dont report vulnerabilities that have no fix yet
+          ignore-unfixed: true
+          format: table
+          skip-setup-trivy: true
+
+      - name: Scan database image with Trivy
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25  # v0.36.0
+        with:
+          scan-type: image
+          image-ref: postgres:19-alpine
+          severity: HIGH,CRITICAL
+          # Set exit-code to 0 to not fail the workflow if vulnerabilities are found. Since this is the highest version nothing can be done to fix the errors. 
+          exit-code: 0
+          # Dont report vulnerabilities that have no fix yet
+          ignore-unfixed: true
+          format: table
 
 
   gitleaks:
@@ -120,10 +155,12 @@ jobs:
           format: table
           scan-ref: .
           severity: HIGH,CRITICAL
+          # Dont report vulnerabilities that have no fix yet
           ignore-unfixed: true
           exit-code: 1
           # On a subsequent call to the action we know trivy is already installed so can skip this
           skip-setup-trivy: true
+      
       
   SAST-semgrep: 
     name: Semgrep scan
@@ -136,3 +173,25 @@ jobs:
 
       - name: Run Semgrep
         run: semgrep scan --config p/default --config p/nodejs --config p/expressjs --config p/react --config p/sql-injection --config p/xss --config p/dockerfile --config p/docker-compose --config p/nginx --config p/github-actions --error
+
+  
+  Dockerfile-Lint:
+    name: Dockerfile Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7
+      
+      - name: Lint backend dockerfile
+        uses: hadolint/hadolint-action@06be81baf89a55ffd0e24b8f04a4185738dd3387 # v3.5.0
+        with:
+          dockerfile: ./backend/Dockerfile
+          failure-threshold: error
+      
+      - name: Lint frontend Dockerfile
+        uses: hadolint/hadolint-action@06be81baf89a55ffd0e24b8f04a4185738dd3387 # v3.5.0
+        with:
+          dockerfile: ./frontend/Dockerfile
+          failure-threshold: error
+
+      
