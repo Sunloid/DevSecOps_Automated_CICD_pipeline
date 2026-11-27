@@ -95,6 +95,17 @@ jobs:
           format: table
           skip-setup-trivy: true
 
+      - name: Scan database image with Trivy
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25  # v0.36.0
+        with:
+          scan-type: image
+          image-ref: postgres:15-alpine
+          severity: HIGH,CRITICAL
+          exit-code: 1
+          # Dont report vulnerabilities that have no fix yet
+          ignore-unfixed: true
+          format: table
+
 
   gitleaks:
     name: Gitleaks Scan
@@ -163,8 +174,8 @@ jobs:
         run: semgrep scan --config p/default --config p/nodejs --config p/expressjs --config p/react --config p/sql-injection --config p/xss --config p/dockerfile --config p/docker-compose --config p/nginx --config p/github-actions --error
 
   
-  Container-security:
-    name: Container Security Scan
+  Dockerfile Lint:
+    name: Dockerfile Lint
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
@@ -182,14 +193,4 @@ jobs:
           dockerfile: ./frontend/Dockerfile
           failure-threshold: error
 
-      - name: Scan database image with Trivy
-        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25  # v0.36.0
-        with:
-          scan-type: image
-          image-ref: postgres:15-alpine
-          severity: HIGH,CRITICAL
-          exit-code: 1
-          # Dont report vulnerabilities that have no fix yet
-          ignore-unfixed: true
-          format: table
-          skip-setup-trivy: true
+      
