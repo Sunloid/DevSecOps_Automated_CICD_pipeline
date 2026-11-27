@@ -163,7 +163,7 @@ jobs:
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25  # v0.36.0
         with:
           scan-type: image
-          image-ref: devsecops_automated_cicd_pipeline-backend:latest
+          image-ref: vaultboard-backend:latest
           severity: HIGH,CRITICAL
           exit-code: 1
           # Dont report vulnerabilities that have no fix yet
@@ -174,7 +174,7 @@ jobs:
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25  # v0.36.0
         with:
           scan-type: image
-          image-ref: devsecops_automated_cicd_pipeline-frontend:latest
+          image-ref: vaultboard-frontend:latest
           severity: HIGH,CRITICAL
           exit-code: 1
           # Dont report vulnerabilities that have no fix yet
