@@ -1,8 +1,10 @@
-# INTENTIONAL WEAKNESSES: end-of-life base image, runs as root, dev deps installed
-FROM node:14
+FROM node:24-alpine
+RUN apk upgrade --no-cache
 WORKDIR /app
 COPY package*.json ./
-RUN npm install
+RUN npm ci --omit=dev && npm cache clean --force \
+    && rm -rf /usr/local/lib/node_modules/npm /usr/local/lib/node_modules/corepack \
+       /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/corepack
 COPY . .
 EXPOSE 3000
 USER node

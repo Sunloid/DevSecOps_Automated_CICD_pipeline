@@ -1,5 +1,6 @@
 # Start from a computer that has node and npm. Call this stage "build"
-FROM node:18 AS build                                   
+FROM node:26-alpine AS build                                   
+RUN apk --no-cache upgrade
 
 # Work inside a folder called /app
 WORKDIR /app
@@ -8,7 +9,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install all the dependencies from the above files
-RUN npm install
+RUN npm ci
 
 # Now copy the rest of the source code
 COPY . .
@@ -19,7 +20,9 @@ RUN npm run build
 
 
 # Start fresh from a different computer that only has the nginx web server.
-FROM nginx:1.21
+FROM nginx:stable-alpine
+
+RUN apk --no-cache upgrade
 
 # Give nginx your settings (serve the site, forward the /api to the backend)
 COPY nginx.conf /etc/nginx/conf.d/default.conf
