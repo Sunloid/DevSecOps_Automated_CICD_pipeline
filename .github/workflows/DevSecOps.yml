@@ -65,11 +65,11 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7
 
       - name: Build backend image
-        run: docker build -t backend:latest .
+        run: docker build -t vaultboard-backend:latest .
         working-directory: backend
 
       - name: Build frontend image
-        run: docker build -t frontend:latest .
+        run: docker build -t vaultboard-frontend:latest .
         working-directory: frontend
 
 
